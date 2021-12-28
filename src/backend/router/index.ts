@@ -1,14 +1,15 @@
 import * as trpc from '@trpc/server';
+import { PokemonClient } from 'pokenode-ts';
+import { z } from 'zod';
+export const appRouter = trpc.router().query("get-pokemon-by-id",{
+  input: z.object({ id: z.number() }),
+  async resolve({ input }) {
+    const api = new PokemonClient()
 
-export const appRouter = trpc.router().query('getUser', {
-  input: (val: unknown) => {
-    if (typeof val === 'string') return val;
-    throw new Error(`Invalid input: ${typeof val}`);
-  },
-  async resolve(req) {
-    req.input; // string
-    return { id: req.input, name: 'Bilbo' };
-  },
-});
+    const pokemon = await api.getPokemonById(input.id)
+
+    return pokemon
+  }
+})
 
 export type AppRouter = typeof appRouter;
